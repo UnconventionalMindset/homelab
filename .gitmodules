@@ -1,3 +1,6 @@
 [submodule "k8s-templates"]
 	path = k8s-templates
 	url = https://github.com/UnconventionalMindset/k8s-templates
+[submodule "ansible-automations"]
+	path = ansible-automations
+	url = https://github.com/UnconventionalMindset/ansible-automations
