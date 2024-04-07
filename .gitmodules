@@ -7,3 +7,6 @@
 [submodule "terraform-automations"]
 	path = terraform-automations
 	url = https://github.com/UnconventionalMindset/terraform-automations
+[submodule "pkl-k8s"]
+	path = pkl-k8s
+	url = https://github.com/UnconventionalMindset/pkl-k8s
