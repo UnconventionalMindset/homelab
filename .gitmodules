@@ -4,3 +4,6 @@
 [submodule "ansible-automations"]
 	path = ansible-automations
 	url = https://github.com/UnconventionalMindset/ansible-automations
+[submodule "terraform-automations"]
+	path = terraform-automations
+	url = https://github.com/UnconventionalMindset/terraform-automations
