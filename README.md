@@ -1,6 +1,12 @@
 # Home Lab
 My homelab
 
+# Cloning this repo
+
+```
+git clone --recurse-submodules  git@github.com:UnconventionalMindset/homelab.git
+```
+
 TODO! automate the following provisioning even more and use GitOps
 
 # Provisioning Guide
