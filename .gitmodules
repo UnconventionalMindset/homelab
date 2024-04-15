@@ -1,12 +1,12 @@
 [submodule "ansible-automations"]
 	path = ansible-automations
-	url = https://github.com/UnconventionalMindset/ansible-automations
+	url = git@github.com:UnconventionalMindset/ansible-automations.git
 [submodule "terraform-automations"]
 	path = terraform-automations
-	url = https://github.com/UnconventionalMindset/terraform-automations
+	url = git@github.com:UnconventionalMindset/terraform-automations.git
 [submodule "pkl-k8s"]
 	path = pkl-k8s
-	url = https://github.com/UnconventionalMindset/pkl-k8s
+	url = git@github.com:UnconventionalMindset/pkl-k8s.git
 [submodule "k8s-templates"]
 	path = k8s-templates
-	url = https://github.com/UnconventionalMindset/k8s-templates
+	url = git@github.com:UnconventionalMindset/k8s-templates.git

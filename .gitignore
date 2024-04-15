@@ -1,1 +1,6 @@
 .vscode
+*secret*
+*secrets*
+*unsecure*
+secret/
+secrets/

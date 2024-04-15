@@ -65,7 +65,7 @@ In another terminal tab execute:
 mkdir -p ~/.kube
 scp -i ~/.ssh/coreos core@192.168.31.190:/home/core/config ~/.kube/config
 chmod 600 ~/.kube/config
-cd ~/homelab/k8s
+cd ~/homelab/k8s-templates
 ```
 
 In the other tab, delete the k8s config:
@@ -175,7 +175,7 @@ k apply -f helm/authentik/ingress.yaml
 ```
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
 helm repo update
-helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace dashboard -f helm/k8s-dashboard/values.yaml --version 7.0.0-alpha1
+helm upgrade --install dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace dashboard -f helm/k8s-dashboard/values.yaml --version 7.0.0-alpha3
 k apply -f helm/k8s-dashboard/create-service-account.yaml
 k apply -f helm/k8s-dashboard/create-cluster_role_binding.yaml
 k apply -f helm/k8s-dashboard/get-bearer.yaml
@@ -196,6 +196,16 @@ k apply -f deployments/generic-device-plugin/
 ### Zigbee
 ```
 k apply -f deployments/zigbee/
+```
+
+### Multus
+```
+git clone https://github.com/k8snetworkplumbingwg/multus-cni.git
+cd multus-cni/
+cat ./deployments/hass/multus-daemonset-thick.yml | k apply -f -
+
+cd ~/homelab/k8s-templates/hass/multus
+k apply -f multus.yaml
 ```
 
 ### Home Assistant
@@ -270,12 +280,6 @@ helm repo update
 helm upgrade --install -n monitoring prometheus prometheus-community/kube-prometheus-stack -f deployments/monitoring/prometheus.yaml
 ```
 
-### Multus
-```
-git clone https://github.com/k8snetworkplumbingwg/multus-cni.git
-cd multus-cni/
-cat ./deployments/multus-daemonset-thick.yml | kubectl apply -f -
-```
 ### Redis
 ```
 k apply -f helm/redis/volume.yaml
