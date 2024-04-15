@@ -1,11 +1,21 @@
 # Home Lab
 My homelab
 
-# Cloning this repo
+# Submodules
+
+## Cloning this repo
 
 ```
 git clone --recurse-submodules  git@github.com:UnconventionalMindset/homelab.git
 ```
+
+## Updating the submodules
+
+```
+git submodule update --remote
+```
+
+# Updating submodules
 
 TODO! automate the following provisioning even more and use GitOps
 
