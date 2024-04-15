@@ -1,12 +1,16 @@
 [submodule "ansible-automations"]
 	path = ansible-automations
 	url = git@github.com:UnconventionalMindset/ansible-automations.git
+	branch = master
 [submodule "terraform-automations"]
 	path = terraform-automations
 	url = git@github.com:UnconventionalMindset/terraform-automations.git
+	branch = master
 [submodule "pkl-k8s"]
 	path = pkl-k8s
 	url = git@github.com:UnconventionalMindset/pkl-k8s.git
+	branch = master
 [submodule "k8s-templates"]
 	path = k8s-templates
 	url = git@github.com:UnconventionalMindset/k8s-templates.git
+	branch = master
