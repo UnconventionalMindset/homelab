@@ -166,7 +166,8 @@ k apply -f deployments/postgres/postgres14.yaml
 k apply -f helm/authentik/namespace.yaml
 k apply -f helm/authentik/authentik-volume+claim.yaml
 helm repo add goauthentik https://charts.goauthentik.io
-helm upgrade --install authentik goauthentik/authentik -f helm/authentik/values.yaml -n auth --version 2024.2.1
+helm repo update
+helm upgrade --install authentik goauthentik/authentik -f helm/authentik/values.yaml -n auth --version 2024.2.2
 k apply -f helm/traefik/middlewares/
 k apply -f helm/authentik/ingress.yaml
 ```
