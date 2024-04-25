@@ -288,3 +288,11 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 helm upgrade --install -n db redis bitnami/redis -f helm/redis/redis.yaml
 ```
+
+### Immich
+```
+k create ns immich
+k apply -f deployments/immich/photos-volume.yaml
+k apply -f deployments/immich/immich.yaml
+k apply -f deployments/immich/ingress.yaml
+```
