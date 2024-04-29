@@ -144,6 +144,14 @@ If the cert does not appear:
   - the issue might be on the name used in traefik-default-tls.yaml
   - try deleting traefik pod or CTRL+F5
 
+### Further Traefik
+k apply -f helm/traefik/skip-ssl.yaml
+k apply -f nas-ingress.yaml
+k apply -f proxmox-hs-ingress.yaml
+k apply -f proxmox-n1-ingress.yaml
+k apply -f proxmox-n2-ingress.yaml
+k apply -f zigbee-controller-ingress.yaml
+
 ### Prod
 ```
 k delete secret umhomelab-com-staging
@@ -203,9 +211,9 @@ k apply -f deployments/zigbee/
 ```
 git clone https://github.com/k8snetworkplumbingwg/multus-cni.git
 cd multus-cni/
-cat ./deployments/hass/multus-daemonset-thick.yml | k apply -f -
+cat ./deployments/multus-daemonset-thick.yml | k apply -f -
 
-cd ~/homelab/k8s-templates/hass/multus
+cd ~/homelab/k8s-templates/deployments/hass/multus
 k apply -f multus.yaml
 ```
 
