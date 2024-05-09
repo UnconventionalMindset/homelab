@@ -15,9 +15,11 @@ git clone --recurse-submodules  git@github.com:UnconventionalMindset/homelab.git
 git submodule update --remote
 ```
 
-# Updating submodules
+# Notes
 
-TODO! automate the following provisioning even more and use GitOps
+Nextcloud has been dropped for being too slow.
+TODO: automate the following provisioning even more and use GitOps
+TODO: make insecure files secure. They are currently left out of this repo for security reasons
 
 # Provisioning Guide
 
@@ -113,6 +115,14 @@ helm upgrade --install traefik traefik/traefik --values=helm/traefik/traefik-val
 k apply -f helm/traefik/ingress.yaml
 ```
 
+### Further Traefik
+k apply -f helm/traefik/skip-ssl.yaml
+k apply -f helm/traefik/reverse-proxy/nas-ingress.yaml
+k apply -f helm/traefik/reverse-proxy/proxmox-hs-ingress.yaml
+k apply -f helm/traefik/reverse-proxy/proxmox-n1-ingress.yaml
+k apply -f helm/traefik/reverse-proxy/proxmox-n2-ingress.yaml
+k apply -f helm/traefik/reverse-proxy/zigbee-controller-ingress.yaml
+
 ### Longhorn
 ```
 k apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.6.0/deploy/longhorn.yaml
@@ -124,11 +134,11 @@ k apply -f deployments/longhorn/ingress.yaml
 ### SSL / Let's Encrypt
  https://www.youtube.com/watch?v=G4CmbYL9UPg
 ```
-k apply -f helm/cert-manager/issuers/secret-cf-token.yaml
+k apply -f secrets/cf-token.secret.yaml
 ```
 ### Staging
 ```
-k apply -f helm/cert-manager/issuers/letsencrypt-staging.yaml
+k apply -f secrets/certificate-issuers/letsencrypt-staging.insecure.yaml
 k apply -f helm/cert-manager/certificates/staging/umhomelab-com.yaml
 k apply -f helm/cert-manager/certificates/staging/traefik-default-tls.yaml
 ```
@@ -144,18 +154,10 @@ If the cert does not appear:
   - the issue might be on the name used in traefik-default-tls.yaml
   - try deleting traefik pod or CTRL+F5
 
-### Further Traefik
-k apply -f helm/traefik/skip-ssl.yaml
-k apply -f nas-ingress.yaml
-k apply -f proxmox-hs-ingress.yaml
-k apply -f proxmox-n1-ingress.yaml
-k apply -f proxmox-n2-ingress.yaml
-k apply -f zigbee-controller-ingress.yaml
-
 ### Prod
 ```
 k delete secret umhomelab-com-staging
-k apply -f helm/cert-manager/issuers/letsencrypt-production.yaml
+k apply -f secrets/certificate-issuers/letsencrypt-production.insecure.yaml
 k apply -f helm/cert-manager/certificates/production/umhomelab-com.yaml
 k apply -f helm/cert-manager/certificates/production/traefik-default-tls.yaml
 ```
@@ -163,6 +165,10 @@ k apply -f helm/cert-manager/certificates/production/traefik-default-tls.yaml
 ### Postgres
 ```
 k apply -f deployments/postgres/namespace.yaml
+
+k apply -f secrets/pg.secret.yaml
+k apply -f secrets/pgadmin.secret.yaml
+
 k apply -f deployments/postgres/configmaps.yaml
 k apply -f deployments/postgres/secret.yaml
 k apply -f deployments/postgres/postgres.yaml
@@ -175,7 +181,7 @@ k apply -f helm/authentik/namespace.yaml
 k apply -f helm/authentik/authentik-volume+claim.yaml
 helm repo add goauthentik https://charts.goauthentik.io
 helm repo update
-helm upgrade --install authentik goauthentik/authentik -f helm/authentik/values.yaml -n auth --version 2024.2.2
+helm upgrade --install authentik goauthentik/authentik -f secrets/authentik-values.insecure.yaml -n auth --version 2024.2.2
 k apply -f helm/traefik/middlewares/
 k apply -f helm/authentik/ingress.yaml
 ```
@@ -185,9 +191,11 @@ k apply -f helm/authentik/ingress.yaml
 helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
 helm repo update
 helm upgrade --install dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace dashboard -f helm/k8s-dashboard/values.yaml --version 7.0.0-alpha3
-k apply -f helm/k8s-dashboard/create-service-account.yaml
-k apply -f helm/k8s-dashboard/create-cluster_role_binding.yaml
-k apply -f helm/k8s-dashboard/get-bearer.yaml
+
+k apply -f secrets/create-service-account.secret.yaml
+k apply -f secrets/create-cluster_role_binding.secret.yaml
+k apply -f secrets/get-bearer.secret.yaml
+
 k apply -f helm/k8s-dashboard/ingress.yaml
 kubectl get secret jac -n dashboard -o jsonpath={".data.token"} | base64 -d
 ```
@@ -208,13 +216,20 @@ k apply -f deployments/zigbee/
 ```
 
 ### Multus
+Usual install (do not use now due to issue)
 ```
 git clone https://github.com/k8snetworkplumbingwg/multus-cni.git
 cd multus-cni/
 cat ./deployments/multus-daemonset-thick.yml | k apply -f -
 
-cd ~/homelab/k8s-templates/deployments/hass/multus
-k apply -f multus.yaml
+cd ~/homelab/k8s-templates/
+k apply -f deployments/multus/multus-lan.yaml
+```
+Sometimes multus fails due to: https://github.com/k8snetworkplumbingwg/multus-cni/issues/1221
+Current temporary fix in:
+```
+k apply -f deployments/multus/multus-lan.yaml
+k apply -f deployments/multus/multus-daemonset-thick.yaml
 ```
 
 ### Home Assistant
@@ -251,6 +266,7 @@ k apply -f deployments/homarr/
 ### Bazarr
 ```
 k apply -f deployments/rr/bazarr/
+k apply -f secrets/bazarr-pg14.secret.yaml
 ```
 
 ### Jellyseerr
@@ -294,13 +310,21 @@ helm upgrade --install -n monitoring prometheus prometheus-community/kube-promet
 k apply -f helm/redis/volume.yaml
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
-helm upgrade --install -n db redis bitnami/redis -f helm/redis/redis.yaml
+helm upgrade --install -n db redis bitnami/redis -f secrets/redis.insecure.yaml
 ```
 
 ### Immich
 ```
 k create ns immich
 k apply -f deployments/immich/photos-volume.yaml
-k apply -f deployments/immich/immich.yaml
+k apply -f secrets/immich.insecure.yaml
 k apply -f deployments/immich/ingress.yaml
+```
+
+### Apache Guacamole
+```
+k create ns guaca
+k apply -f secrets/guaca.secret.yaml
+k apply -f deployments/guaca/guacd.yaml
+k apply -f deployments/guaca/guaca.yaml
 ```
